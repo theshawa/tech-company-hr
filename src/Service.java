@@ -54,13 +54,8 @@ public abstract class Service<T extends Model> {
 
     public void updateItem(T v) throws Exception {
         v.updatedAt = System.currentTimeMillis();
-        removeItem(v.id);
+        items = items.stream().filter(i -> !i.id.equals(v.id)).collect(Collectors.toList());
         addItem(v);
-        save();
-    }
-
-    public void removeItem(String id) throws Exception {
-        items = items.stream().filter(i -> !i.id.equals(id)).collect(Collectors.toList());
         save();
     }
 

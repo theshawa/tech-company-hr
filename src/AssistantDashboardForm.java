@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AssistantDashboardForm extends AppFrame {
+    private final DefaultTableModel employeeTableModel;
     private JPanel mainPane;
     private JComboBox<Department> departmentComboBox;
     private JTextField epfField;
@@ -15,8 +16,6 @@ public class AssistantDashboardForm extends AppFrame {
     private JTable employeeTable;
     private JButton resetButton;
     private JButton logoutButton;
-
-    private final DefaultTableModel employeeTableModel;
 
     public AssistantDashboardForm() {
         this.setTitle("HR Assistant Dashboard");

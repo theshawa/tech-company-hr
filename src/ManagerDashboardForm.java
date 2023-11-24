@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 public class ManagerDashboardForm extends AppFrame {
 
+    private final DefaultTableModel employeeTableModel;
     private JPanel dashboardPane;
     private JButton departmentButton;
     private JButton employeeButton;
@@ -22,8 +23,6 @@ public class ManagerDashboardForm extends AppFrame {
     private JButton resetButton;
     private JTable employeeTable;
     private JButton assignToDepartmentButton;
-
-    private final DefaultTableModel employeeTableModel;
 
     public ManagerDashboardForm() {
         this.setTitle("HR Manager Dashboard");
