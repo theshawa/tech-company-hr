@@ -6,17 +6,11 @@ import java.util.UUID;
 
 public class App {
     public static User currentUser;
-    private static List<Department> departments = new ArrayList<>(List.of(new Department[]{
-            new Department("1", "Development")
-    }));
+    private static List<Department> departments = new ArrayList<>();
     private static List<User> users = new ArrayList<User>(
     );
-    private static List<Employee> employees = new ArrayList<>(List.of(new Employee[]{
-            new Employee("1", "Karel Sigarel", "1", "1234")
-    }));
-    private static List<Designation> designations = new ArrayList<>(List.of(new Designation[]{
-            new Designation("1", "Lead Developer", "1"),
-    }));
+    private static List<Employee> employees = new ArrayList<>();
+    private static List<Designation> designations = new ArrayList<>();
 
     public static List<Employee> getEmployees() {
         return employees;
