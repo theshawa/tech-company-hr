@@ -17,37 +17,28 @@ public class AssignDesignationForm extends AppDialog {
 
         DefaultComboBoxModel<Designation> designationComboBoxModel = new DefaultComboBoxModel<>();
         designationComboBox.setModel(designationComboBoxModel);
-        designationComboBoxModel.addAll(App.designationService.getItems());
+        designationComboBoxModel.addAll(App.getDesignations());
 
         DefaultComboBoxModel<Employee> employeeDefaultComboBoxModel = new DefaultComboBoxModel<>();
         employeeComboBox.setModel(employeeDefaultComboBoxModel);
-        employeeDefaultComboBoxModel.addAll(App.employeeService.getItems());
+        employeeDefaultComboBoxModel.addAll(App.getEmployees());
 
         assignDesignationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (designationComboBox.getSelectedItem() == null || employeeComboBox.getSelectedItem() == null) {
-                    JOptionPane.showMessageDialog(mainPanel, "All fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
+                    App.showErrorMessage(AssignDesignationForm.this, "All fields are required!");
                     return;
                 }
-                try {
-                    Employee currentEmployee = (Employee) employeeComboBox.getSelectedItem();
-                    String designationId = ((Designation) designationComboBox.getSelectedItem()).id;
-                    for (Employee employee : App.employeeService.getItems().stream().filter(em -> em.designationId != null && em.designationId.equals(designationId)).toList()) {
-                        employee.designationId = null;
-                        App.employeeService.updateItem(employee);
-                    }
-                    currentEmployee.designationId = designationId;
-                    App.employeeService.updateItem(currentEmployee);
-                    JOptionPane.showMessageDialog(mainPanel, "Designation Assigned!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    listModel.setRowCount(0);
-                    for (Employee em : App.employeeService.getItems()) {
-                        listModel.addRow(em.tableRow());
-                    }
-                    dispose();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(mainPanel, ex.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
+                Employee currentEmployee = (Employee) employeeComboBox.getSelectedItem();
+                String designationId = ((Designation) designationComboBox.getSelectedItem()).id;
+                App.assignDesignation(designationId, currentEmployee.id);
+                App.showSuccessMessage(AssignDesignationForm.this, "Designation assigned!");
+                listModel.setRowCount(0);
+                for (Employee em : App.getEmployees()) {
+                    listModel.addRow(em.tableRow());
                 }
+                dispose();
             }
         });
     }

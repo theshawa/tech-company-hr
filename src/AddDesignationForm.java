@@ -16,16 +16,12 @@ public class AddDesignationForm extends AppDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (titleField.getText().isBlank()) {
-                    JOptionPane.showMessageDialog(mainPanel, "Title is required!", "Error", JOptionPane.ERROR_MESSAGE);
+                    App.showErrorMessage(AddDesignationForm.this, "Title is required!");
                     return;
                 }
-                try {
-                    App.designationService.addItem(new Designation(titleField.getText()));
-                    JOptionPane.showMessageDialog(mainPanel, "Designation Added!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    dispose();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(mainPanel, ex.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
-                }
+                App.addDesignation(titleField.getText());
+                App.showSuccessMessage(AddDesignationForm.this, "Designation added!");
+                dispose();
             }
         });
     }

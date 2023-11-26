@@ -16,32 +16,27 @@ public class AssignToDepartmentForm extends AppDialog {
 
         DefaultComboBoxModel<Department> departmentDefaultComboBoxModel = new DefaultComboBoxModel<>();
         departmentComboBox.setModel(departmentDefaultComboBoxModel);
-        departmentDefaultComboBoxModel.addAll(App.departmentService.getItems());
+        departmentDefaultComboBoxModel.addAll(App.getDepartments());
 
         DefaultComboBoxModel<Employee> employeeDefaultComboBoxModel = new DefaultComboBoxModel<>();
         employeeComboBox.setModel(employeeDefaultComboBoxModel);
-        employeeDefaultComboBoxModel.addAll(App.employeeService.getItems());
+        employeeDefaultComboBoxModel.addAll(App.getEmployees());
 
         assignToDepartmentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (departmentComboBox.getSelectedItem() == null || employeeComboBox.getSelectedItem() == null) {
-                    JOptionPane.showMessageDialog(mainPanel, "All fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
+                    App.showErrorMessage(AssignToDepartmentForm.this, "All fields are required!");
                     return;
                 }
-                try {
-                    Employee currentEmployee = (Employee) employeeComboBox.getSelectedItem();
-                    currentEmployee.departmentId = ((Department) departmentComboBox.getSelectedItem()).id;
-                    App.employeeService.updateItem(currentEmployee);
-                    JOptionPane.showMessageDialog(mainPanel, "Assigned to the Department!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    listModel.setRowCount(0);
-                    for (Employee em : App.employeeService.getItems()) {
-                        listModel.addRow(em.tableRow());
-                    }
-                    dispose();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(mainPanel, ex.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
+                Employee currentEmployee = (Employee) employeeComboBox.getSelectedItem();
+                App.changeDepartment(currentEmployee.id, ((Department) departmentComboBox.getSelectedItem()).id);
+                App.showSuccessMessage(AssignToDepartmentForm.this, "Assigned to the department!");
+                listModel.setRowCount(0);
+                for (Employee em : App.getEmployees()) {
+                    listModel.addRow(em.tableRow());
                 }
+                dispose();
             }
         });
     }

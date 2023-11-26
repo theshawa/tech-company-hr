@@ -17,15 +17,12 @@ public class AddAssistantForm extends AppDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (unameField.getText().isBlank() || pwField.getText().isBlank()) {
-                    JOptionPane.showMessageDialog(mainPanel, "All fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
+                    App.showErrorMessage(AddAssistantForm.this, "All fields are required!");
                     return;
                 }
-                try {
-                    App.userService.addItem(new User(UserRole.Assistant, unameField.getText(), pwField.getText()));
-                    JOptionPane.showMessageDialog(mainPanel, "Assistant Added!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                if (App.addAssistant(unameField.getText(), pwField.getText())) {
+                    App.showSuccessMessage(AddAssistantForm.this, "Assistant Added!");
                     dispose();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(mainPanel, ex.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

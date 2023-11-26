@@ -16,19 +16,15 @@ public class AddDepartmentForm extends AppDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (nameField.getText().isBlank()) {
-                    JOptionPane.showMessageDialog(mainPanel, "Name is required!", "Error", JOptionPane.ERROR_MESSAGE);
+                    App.showErrorMessage(AddDepartmentForm.this, "Name is required!");
                     return;
                 }
-                try {
-                    App.departmentService.addItem(new Department(nameField.getText()));
-                    JOptionPane.showMessageDialog(mainPanel, "Department Added!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    listModel.removeAllElements();
-                    listModel.addElement(null);
-                    listModel.addAll(App.departmentService.getItems());
-                    dispose();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(mainPanel, ex.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
-                }
+                App.addDepartment(nameField.getText());
+                App.showSuccessMessage(AddDepartmentForm.this, "Department Added!");
+                listModel.removeAllElements();
+                listModel.addElement(null);
+                listModel.addAll(App.getDepartments());
+                dispose();
             }
         });
     }

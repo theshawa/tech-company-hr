@@ -19,26 +19,21 @@ public class AddEmployeeForm extends AppDialog {
 
         DefaultComboBoxModel<Department> departmentComboBoxModel = new DefaultComboBoxModel<>();
         departmentComboBox.setModel(departmentComboBoxModel);
-        departmentComboBoxModel.addAll(App.departmentService.getItems());
+        departmentComboBoxModel.addAll(App.getDepartments());
         addEmployeeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (departmentComboBox.getSelectedItem() == null || nameField.getText().isBlank() || epfField.getText().isBlank()) {
-                    JOptionPane.showMessageDialog(mainPanel, "All fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
+                    App.showErrorMessage(AddEmployeeForm.this, "All fields are required!");
                     return;
                 }
-                try {
-                    Employee newEmployee = new Employee(nameField.getText(), epfField.getText(), ((Department) Objects.requireNonNull(departmentComboBox.getSelectedItem())).id);
-                    App.employeeService.addItem(newEmployee);
-                    JOptionPane.showMessageDialog(mainPanel, "Employee Added!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    listModel.setRowCount(0);
-                    for (Employee em : App.employeeService.getItems()) {
-                        listModel.addRow(em.tableRow());
-                    }
-                    dispose();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(mainPanel, ex.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
+                App.addEmployee(nameField.getText(), ((Department) Objects.requireNonNull(departmentComboBox.getSelectedItem())).id, epfField.getText());
+                App.showSuccessMessage(AddEmployeeForm.this, "Employee added!");
+                listModel.setRowCount(0);
+                for (Employee em : App.getEmployees()) {
+                    listModel.addRow(em.tableRow());
                 }
+                dispose();
             }
         });
     }

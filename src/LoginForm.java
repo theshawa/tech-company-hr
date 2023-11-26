@@ -15,23 +15,17 @@ public class LoginForm extends AppFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    if (App.login(unameField.getText(), pwField.getText())) {
-                        JOptionPane.showMessageDialog(loginPane, "Welcome again " + (App.currentUser.role.equals(UserRole.Assistant) ? "assistant" : "manager") + "!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        dispose();
-                        // TODO: Open Dashboard
-//                        ManagerDashboard managerDashboard = new ManagerDashboard();
-//                        managerDashboard.showMe();
-                        if (App.currentUser.role.equals(UserRole.Assistant)) {
-                            (new AssistantDashboardForm()).open();
-                        } else {
-                            (new ManagerDashboardForm()).open();
-                        }
+                if (App.login(unameField.getText(), pwField.getText())) {
+                    if (!App.currentUser.isManager) {
+                        new AssistantDashboardForm().open();
+                        App.showSuccessMessage(LoginForm.this, "Welcome assistant!");
                     } else {
-                        JOptionPane.showMessageDialog(loginPane, "Invalid Credentials!", "Error", JOptionPane.ERROR_MESSAGE);
+                        new ManagerDashboardForm().open();
+                        App.showSuccessMessage(LoginForm.this, "Welcome manager!");
                     }
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(loginPane, ex.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
+                    dispose();
+                } else {
+                    App.showErrorMessage(LoginForm.this, "Invalid credentials!");
                 }
             }
         });

@@ -3,7 +3,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AssistantDashboardForm extends AppFrame {
     private final DefaultTableModel employeeTableModel;
@@ -24,7 +23,7 @@ public class AssistantDashboardForm extends AppFrame {
         DefaultComboBoxModel<Department> departmentComboBoxModel = new DefaultComboBoxModel<>();
         departmentComboBox.setModel(departmentComboBoxModel);
         departmentComboBoxModel.addElement(null);
-        departmentComboBoxModel.addAll(App.departmentService.getItems());
+        departmentComboBoxModel.addAll(App.getDepartments());
 
         searchButton.addActionListener(new ActionListener() {
             @Override
@@ -61,22 +60,7 @@ public class AssistantDashboardForm extends AppFrame {
         String designationQ = designationField.getText().trim().toLowerCase();
         String epfNoQ = epfField.getText().trim().toLowerCase();
 
-        List<Employee> showingEmployees = App.employeeService.getItems();
-        if (departmentQ != null) {
-            showingEmployees = showingEmployees.stream().filter(e -> e.departmentId != null && e.departmentId.equals(departmentQ.id)).collect(Collectors.toList());
-        }
-        if (!nameQ.isBlank()) {
-            showingEmployees = showingEmployees.stream().filter(e -> e.name.toLowerCase().startsWith(nameQ) || e.name.toLowerCase().contains(nameQ)).collect(Collectors.toList());
-        }
-        if (!designationQ.isBlank()) {
-            showingEmployees = showingEmployees.stream().filter(e -> {
-                Designation d = App.designationService.getById(e.designationId);
-                return d != null && (d.title.toLowerCase().startsWith(designationQ) || d.title.toLowerCase().contains(designationQ));
-            }).collect(Collectors.toList());
-        }
-        if (!epfNoQ.isBlank()) {
-            showingEmployees = showingEmployees.stream().filter(e -> e.epfNo.toLowerCase().startsWith(epfNoQ) || e.epfNo.toLowerCase().contains(epfNoQ)).collect(Collectors.toList());
-        }
+        List<Employee> showingEmployees = App.filterEmployees(departmentQ != null ? departmentQ.id : "", nameQ, designationQ, epfNoQ);
         employeeTableModel.setRowCount(0);
         for (Employee e : showingEmployees) {
             employeeTableModel.addRow(e.tableRow());
