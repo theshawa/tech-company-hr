@@ -1,17 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 public class App {
+    public static User currentUser;
     private static List<Department> departments = new ArrayList<>(List.of(new Department[]{
             new Department("1", "Development")
     }));
     private static List<User> users = new ArrayList<User>(
     );
-    public static User currentUser;
     private static List<Employee> employees = new ArrayList<>(List.of(new Employee[]{
             new Employee("1", "Karel Sigarel", "1", "1234")
     }));
@@ -30,19 +29,20 @@ public class App {
     public static List<Designation> getDesignations() {
         return designations;
     }
+
     public static List<User> getUsers() {
         return users;
     }
 
     public static void loadData() throws Exception {
         users = TextDB.readUsers();
-        if(users.size()==0){
+        if (users.size() == 0) {
             App.addUser("john", "1234", true);
             App.addUser("jessica", "1234", false);
         }
         employees = TextDB.readEmployees();
-        departments =TextDB.readDepartments();
-        designations =TextDB.readDesignations();
+        departments = TextDB.readDepartments();
+        designations = TextDB.readDesignations();
     }
 
     // utils
@@ -63,6 +63,7 @@ public class App {
         }
         return false;
     }
+
     public static void logout() {
         currentUser = null;
         new LoginForm().open();
@@ -81,10 +82,11 @@ public class App {
         return false;
     }
 
-    public static void addUser(String username, String password,boolean isManager) throws Exception {
+    public static void addUser(String username, String password, boolean isManager) throws Exception {
         users.add(new User(username, password, isManager));
         TextDB.saveUsers();
     }
+
     // departments
     public static void addDepartment(String name) throws Exception {
         departments.add(new Department(UUID.randomUUID().toString(), name));
@@ -138,8 +140,8 @@ public class App {
             out = out.stream().filter(e -> e.departmentId.equals(departmentId)).toList();
         }
         if (!designationQ.isBlank()) {
-            List<Designation> ds =  designations.stream().filter(d -> d.title.toLowerCase().startsWith(designationQ.toLowerCase()) || d.title.toLowerCase().contains(designationQ.toLowerCase())).toList();
-            out = out.stream().filter(e ->ds.stream().filter(d->d.employeeId.equals(e.id)).toList().size()>0).toList();
+            List<Designation> ds = designations.stream().filter(d -> d.title.toLowerCase().startsWith(designationQ.toLowerCase()) || d.title.toLowerCase().contains(designationQ.toLowerCase())).toList();
+            out = out.stream().filter(e -> ds.stream().filter(d -> d.employeeId.equals(e.id)).toList().size() > 0).toList();
         }
         if (!nameQ.isBlank()) {
             out = out.stream().filter(e -> e.name.toLowerCase().startsWith(nameQ) || e.name.toLowerCase().contains(nameQ)).toList();

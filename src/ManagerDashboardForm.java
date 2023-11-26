@@ -103,7 +103,7 @@ public class ManagerDashboardForm extends AppFrame {
         String designationQ = designationField.getText().trim().toLowerCase();
         String epfNoQ = epfField.getText().trim().toLowerCase();
 
-        List<Employee> showingEmployees = App.filterEmployees(departmentQ != null ? departmentQ.id : "",designationQ, nameQ,epfNoQ);
+        List<Employee> showingEmployees = App.filterEmployees(departmentQ != null ? departmentQ.id : "", designationQ, nameQ, epfNoQ);
         employeeTableModel.setRowCount(0);
         for (Employee e : showingEmployees) {
             employeeTableModel.addRow(e.tableRow());
