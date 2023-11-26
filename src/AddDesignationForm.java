@@ -19,7 +19,11 @@ public class AddDesignationForm extends AppDialog {
                     App.showErrorMessage(AddDesignationForm.this, "Title is required!");
                     return;
                 }
-                App.addDesignation(titleField.getText());
+                try {
+                    App.addDesignation(titleField.getText());
+                } catch (Exception ex) {
+                    App.showErrorMessage(AddDesignationForm.this, "Unable to add designation due to a system error!");
+                }
                 App.showSuccessMessage(AddDesignationForm.this, "Designation added!");
                 dispose();
             }

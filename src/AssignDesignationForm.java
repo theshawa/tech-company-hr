@@ -32,7 +32,11 @@ public class AssignDesignationForm extends AppDialog {
                 }
                 Employee currentEmployee = (Employee) employeeComboBox.getSelectedItem();
                 String designationId = ((Designation) designationComboBox.getSelectedItem()).id;
-                App.assignDesignation(designationId, currentEmployee.id);
+                try {
+                    App.assignDesignation(designationId, currentEmployee.id);
+                } catch (Exception ex) {
+                    App.showErrorMessage(AssignDesignationForm.this, "Unable to assign designation due to a system error!");
+                }
                 App.showSuccessMessage(AssignDesignationForm.this, "Designation assigned!");
                 listModel.setRowCount(0);
                 for (Employee em : App.getEmployees()) {

@@ -1,10 +1,16 @@
 import javax.swing.*;
-import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        SwingUtilities.invokeLater(() -> {
-            (new LoginForm()).open();
-        });
+    public static void main(String[] args){
+        try {
+            TextDB.init();
+            App.loadData();
+            SwingUtilities.invokeLater(() -> {
+                (new LoginForm()).open();
+            });
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
     }
 }

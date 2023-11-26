@@ -20,9 +20,13 @@ public class AddAssistantForm extends AppDialog {
                     App.showErrorMessage(AddAssistantForm.this, "All fields are required!");
                     return;
                 }
-                if (App.addAssistant(unameField.getText(), pwField.getText())) {
-                    App.showSuccessMessage(AddAssistantForm.this, "Assistant Added!");
-                    dispose();
+                try {
+                    if (App.addAssistant(unameField.getText(), pwField.getText())) {
+                        App.showSuccessMessage(AddAssistantForm.this, "Assistant Added!");
+                        dispose();
+                    }
+                } catch (Exception ex) {
+                    App.showErrorMessage(AddAssistantForm.this, "Unable to add assistant due to a system error!");
                 }
             }
         });

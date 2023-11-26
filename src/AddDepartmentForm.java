@@ -19,7 +19,11 @@ public class AddDepartmentForm extends AppDialog {
                     App.showErrorMessage(AddDepartmentForm.this, "Name is required!");
                     return;
                 }
-                App.addDepartment(nameField.getText());
+                try {
+                    App.addDepartment(nameField.getText());
+                } catch (Exception ex) {
+                    App.showErrorMessage(AddDepartmentForm.this, "Unable to add department due to a system error!");
+                }
                 App.showSuccessMessage(AddDepartmentForm.this, "Department Added!");
                 listModel.removeAllElements();
                 listModel.addElement(null);

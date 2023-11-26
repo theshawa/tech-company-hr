@@ -1,18 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 public class App {
-    private static final List<Department> departments = new ArrayList<>(List.of(new Department[]{
+    private static List<Department> departments = new ArrayList<>(List.of(new Department[]{
             new Department("1", "Development")
     }));
-    private static final List<User> users = new ArrayList<User>(List.of(new User[]{
-                    new User("john", "1234", true),
-                    new User("jessica", "1234", false),
-            }
-    )
+    private static List<User> users = new ArrayList<User>(
     );
     public static User currentUser;
     private static List<Employee> employees = new ArrayList<>(List.of(new Employee[]{
@@ -33,6 +30,20 @@ public class App {
     public static List<Designation> getDesignations() {
         return designations;
     }
+    public static List<User> getUsers() {
+        return users;
+    }
+
+    public static void loadData() throws Exception {
+        users = TextDB.readUsers();
+        if(users.size()==0){
+            App.addUser("john", "1234", true);
+            App.addUser("jessica", "1234", false);
+        }
+        employees = TextDB.readEmployees();
+        departments =TextDB.readDepartments();
+        designations =TextDB.readDesignations();
+    }
 
     // utils
     public static void showErrorMessage(Component parent, String msg) {
@@ -52,7 +63,6 @@ public class App {
         }
         return false;
     }
-
     public static void logout() {
         currentUser = null;
         new LoginForm().open();
@@ -62,17 +72,23 @@ public class App {
         return users.stream().filter(u -> u.username.equals(username)).findFirst().orElse(null);
     }
 
-    public static boolean addAssistant(String username, String password) {
+    public static boolean addAssistant(String username, String password) throws Exception {
         if (getUserWithUsername(username) == null) {
             users.add(new User(username, password, false));
+            TextDB.saveUsers();
             return true;
         }
         return false;
     }
 
+    public static void addUser(String username, String password,boolean isManager) throws Exception {
+        users.add(new User(username, password, isManager));
+        TextDB.saveUsers();
+    }
     // departments
-    public static void addDepartment(String name) {
+    public static void addDepartment(String name) throws Exception {
         departments.add(new Department(UUID.randomUUID().toString(), name));
+        TextDB.saveDepartments();
     }
 
     public static Department getDepartmentById(String id) {
@@ -80,36 +96,40 @@ public class App {
     }
 
     // designation
-    public static void addDesignation(String title) {
-        designations.add(new Designation(UUID.randomUUID().toString(), title, ""));
+    public static void addDesignation(String title) throws Exception {
+        designations.add(new Designation(UUID.randomUUID().toString(), title, "0"));
+        TextDB.saveDesignations();
     }
 
     public static Designation getDesignationByEmployeeId(String eid) {
         return designations.stream().filter(d -> d.employeeId.equals(eid)).findFirst().orElse(null);
     }
 
-    public static void assignDesignation(String id, String eid) {
+    public static void assignDesignation(String id, String eid) throws Exception {
         designations = designations.stream().peek(d -> {
             if (d.employeeId.equals(eid) && !d.id.equals(id)) {
-                d.employeeId = "";
+                d.employeeId = "0";
             } else if (d.id.equals(id)) {
                 d.employeeId = eid;
             }
         }).toList();
+        TextDB.saveDesignations();
     }
 
     // employees
-    public static void addEmployee(String name, String departmentId, String epfNo) {
+    public static void addEmployee(String name, String departmentId, String epfNo) throws Exception {
         employees.add(new Employee(UUID.randomUUID().toString(), name, departmentId, epfNo));
+        TextDB.saveEmployees();
     }
 
-    public static void changeDepartment(String eid, String departmentId) {
+    public static void changeDepartment(String eid, String departmentId) throws Exception {
         employees = employees.stream().map(e -> {
             if (e.id.equals(eid)) {
                 return new Employee(eid, e.name, departmentId, e.epfNo);
             }
             return e;
         }).toList();
+        TextDB.saveEmployees();
     }
 
     public static List<Employee> filterEmployees(String departmentId, String designationQ, String nameQ, String epfNoQ) {
@@ -118,10 +138,8 @@ public class App {
             out = out.stream().filter(e -> e.departmentId.equals(departmentId)).toList();
         }
         if (!designationQ.isBlank()) {
-            Designation designation = designations.stream().filter(d -> d.title.toLowerCase().startsWith(designationQ) || d.title.toLowerCase().contains(designationQ)).findFirst().orElse(null);
-            if (designation != null) {
-                out = out.stream().filter(e -> e.id.equals(designation.employeeId)).toList();
-            }
+            List<Designation> ds =  designations.stream().filter(d -> d.title.toLowerCase().startsWith(designationQ.toLowerCase()) || d.title.toLowerCase().contains(designationQ.toLowerCase())).toList();
+            out = out.stream().filter(e ->ds.stream().filter(d->d.employeeId.equals(e.id)).toList().size()>0).toList();
         }
         if (!nameQ.isBlank()) {
             out = out.stream().filter(e -> e.name.toLowerCase().startsWith(nameQ) || e.name.toLowerCase().contains(nameQ)).toList();

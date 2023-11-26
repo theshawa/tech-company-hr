@@ -27,7 +27,11 @@ public class AddEmployeeForm extends AppDialog {
                     App.showErrorMessage(AddEmployeeForm.this, "All fields are required!");
                     return;
                 }
-                App.addEmployee(nameField.getText(), ((Department) Objects.requireNonNull(departmentComboBox.getSelectedItem())).id, epfField.getText());
+                try {
+                    App.addEmployee(nameField.getText(), ((Department) Objects.requireNonNull(departmentComboBox.getSelectedItem())).id, epfField.getText());
+                } catch (Exception ex) {
+                    App.showErrorMessage(AddEmployeeForm.this, "Unable to add employee due to a system error!");
+                }
                 App.showSuccessMessage(AddEmployeeForm.this, "Employee added!");
                 listModel.setRowCount(0);
                 for (Employee em : App.getEmployees()) {

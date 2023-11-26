@@ -30,7 +30,11 @@ public class AssignToDepartmentForm extends AppDialog {
                     return;
                 }
                 Employee currentEmployee = (Employee) employeeComboBox.getSelectedItem();
-                App.changeDepartment(currentEmployee.id, ((Department) departmentComboBox.getSelectedItem()).id);
+                try {
+                    App.changeDepartment(currentEmployee.id, ((Department) departmentComboBox.getSelectedItem()).id);
+                } catch (Exception ex) {
+                    App.showErrorMessage(AssignToDepartmentForm.this, "Unable to assign to department due to a system error!");
+                }
                 App.showSuccessMessage(AssignToDepartmentForm.this, "Assigned to the department!");
                 listModel.setRowCount(0);
                 for (Employee em : App.getEmployees()) {
